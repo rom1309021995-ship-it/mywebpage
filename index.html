@@ -3,80 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Hub - Timestamps Enabled</title>
+    <title>CGCI STUDENT HUB - Neon Edition</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <style>
-        :root { --primary: #2e7d32; --secondary: #4caf50; --bg: #f1f8e9; --admin-gold: #fbc02d; --danger: #d32f2f; --white: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; }
-        .sidebar { height: 100%; width: 0; position: fixed; z-index: 1000; top: 0; left: 0; background-color: var(--primary); overflow-x: hidden; transition: 0.5s; padding-top: 60px; }
-        .sidebar a { padding: 15px 25px; text-decoration: none; font-size: 1.1rem; color: white; display: block; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        header { background: var(--primary); color: white; padding: 15px; display: flex; align-items: center; position: sticky; top: 0; z-index: 999; }
-        .container { display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .card { background: var(--white); padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 500px; margin-bottom: 20px; }
+        :root { 
+            --bg-dark: #0a0a0a; 
+            --card-dark: #141414; 
+            --accent-purple: #a855f7; 
+            --text-white: #f8fafc; 
+            --glow: 0 0 10px rgba(168, 85, 247, 0.4);
+            --border-glow: 1px solid rgba(168, 85, 247, 0.3);
+            --danger: #ef4444;
+        }
+
+        body { 
+            font-family: 'Inter', 'Segoe UI', sans-serif; 
+            background: var(--bg-dark); 
+            color: var(--text-white);
+            margin: 0; 
+            line-height: 1.5;
+        }
+
+        /* SIDEBAR */
+        .sidebar { height: 100%; width: 0; position: fixed; z-index: 1000; top: 0; left: 0; background-color: #000; overflow-x: hidden; transition: 0.5s; padding-top: 60px; border-right: var(--border-glow); }
+        .sidebar a { padding: 15px 25px; text-decoration: none; font-size: 1rem; color: #ccc; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.3s; }
+        .sidebar a:hover { color: var(--accent-purple); text-shadow: var(--glow); }
+
+        header { 
+            background: rgba(10, 10, 10, 0.8); 
+            backdrop-filter: blur(10px);
+            color: white; 
+            padding: 15px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+            position: sticky; 
+            top: 0; 
+            z-index: 999; 
+            border-bottom: var(--border-glow);
+        }
+
+        .header-left { display: flex; align-items: center; }
+        .notif-badge { position: relative; cursor: pointer; }
+        .badge-dot { position: absolute; top: -2px; right: -2px; width: 10px; height: 10px; background: var(--danger); border-radius: 50%; border: 2px solid var(--bg-dark); display: none; }
+
+        .container { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 15px; 
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card { 
+            background: var(--card-dark); 
+            padding: 2rem; 
+            border-radius: 12px; 
+            box-shadow: var(--glow); 
+            width: 100%; 
+            max-width: 550px; 
+            margin-bottom: 20px; 
+            border: var(--border-glow);
+            box-sizing: border-box;
+        }
+
         .hidden { display: none !important; }
-        input, textarea, select { width: 95%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; }
-        button { width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; margin-top: 10px; }
-        .link-text { color: var(--primary); cursor: pointer; text-decoration: underline; font-size: 0.9rem; }
-        .section-label { font-weight: bold; color: var(--primary); margin-top: 15px; display: block; border-bottom: 1px solid #eee; padding-bottom: 5px; text-align: left; }
+
+        input, textarea, select { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 10px 0; 
+            border: 1px solid #333; 
+            border-radius: 8px; 
+            background: #1a1a1a; 
+            color: white;
+            box-sizing: border-box;
+        }
         
-        /* POSTS & COMMENTS */
-        .post-card { background: #fffde7; border-left: 6px solid var(--admin-gold); padding: 20px; border-radius: 10px; text-align: left; margin-bottom: 25px; position: relative; }
+        input:focus { border-color: var(--accent-purple); outline: none; box-shadow: var(--glow); }
+
+        button { 
+            width: 100%; 
+            padding: 14px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            background: var(--accent-purple); 
+            color: white; 
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        button:hover { filter: brightness(1.2); box-shadow: var(--glow); }
+
+        .link-text { color: var(--accent-purple); cursor: pointer; text-decoration: none; font-size: 0.9rem; font-weight: bold; }
+        .section-label { font-weight: bold; color: var(--accent-purple); margin-top: 20px; display: block; border-bottom: 1px solid #333; padding-bottom: 5px; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+
+        .post-card { background: #111; border-left: 4px solid var(--accent-purple); padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }
+        .post-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        .timestamp { font-size: 0.7rem; color: #666; display: block; margin-bottom: 15px; }
+        
         .admin-controls { position: absolute; top: 10px; right: 10px; display: flex; gap: 5px; }
-        .btn-small { width: auto; padding: 5px 10px; font-size: 0.7rem; margin: 0; }
-        .post-actions { display: flex; gap: 15px; margin: 10px 0; font-size: 0.85rem; color: var(--primary); font-weight: bold; }
-        .action-btn { cursor: pointer; padding: 5px 8px; border-radius: 5px; transition: 0.2s; }
-        .action-btn:hover { background: rgba(0,0,0,0.05); }
+        .btn-small { width: auto; padding: 5px 10px; font-size: 0.7rem; margin: 0; background: #222; border: 1px solid #444; }
         
-        .timestamp { font-size: 0.7rem; color: #777; display: block; margin-top: -10px; margin-bottom: 10px; }
-        .comment-section { margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 10px; }
-        .comment-box { background: #f8f9fa; padding: 8px; border-radius: 8px; margin-top: 5px; border: 1px solid #eee; font-size: 0.85rem; }
-        .comment-time { font-size: 0.65rem; color: #999; display: block; margin-top: 2px; }
+        .post-actions { display: flex; gap: 15px; margin: 15px 0 0; font-size: 0.85rem; color: var(--accent-purple); }
+        .action-btn { cursor: pointer; display: flex; align-items: center; gap: 5px; }
+
+        .comment-section { margin-top: 15px; border-top: 1px solid #222; padding-top: 15px; }
+        .comment-box { background: #1a1a1a; padding: 10px; border-radius: 8px; margin-top: 8px; border: 1px solid #222; font-size: 0.85rem; }
+        .comment-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+        .comment-time { font-size: 0.65rem; color: #555; }
+        .course-tag { font-size: 0.65rem; color: var(--accent-purple); background: rgba(168, 85, 247, 0.1); padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 5px; }
+
+        .mention { color: #38bdf8; font-weight: bold; }
         
-        #editModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: flex; justify-content: center; align-items: center; }
+        .notif-item { padding: 12px; border-bottom: 1px solid #222; font-size: 0.9rem; transition: 0.2s; cursor: pointer; }
+        .notif-item:hover { background: #1a1a1a; }
+        .notif-unread { border-left: 3px solid var(--accent-purple); background: rgba(168, 85, 247, 0.05); }
+
+        #editModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+
+        @media (max-width: 480px) {
+            .card { padding: 1.5rem; }
+            header { font-size: 0.9rem; }
+            .sidebar { padding-top: 80px; }
+        }
     </style>
 </head>
 <body>
 
     <div id="mySidebar" class="sidebar">
         <a onclick="closeNav()" style="font-size:36px; position:absolute; top:10px; right:25px">&times;</a>
-        <a onclick="showView('welcomeView')">🏠 Home Feed</a>
-        <a onclick="showView('viewDetailsView')">📄 My Profile</a>
-        <a onclick="showView('editDetailsView')">✏️ Edit Details</a>
-        <a id="adminOption" class="hidden" onclick="showView('adminPanelView')" style="background: #1b5e20;">👑 Admin Control</a>
-        <a id="logoutBtn" style="color: #ffcdd2;">🚪 Logout</a>
+        <a onclick="showView('welcomeView')"><span class="material-symbols-outlined">home</span> Feed</a>
+        <a onclick="showView('notificationsView')"><span class="material-symbols-outlined">notifications</span> Activity</a>
+        <a onclick="showView('viewDetailsView')"><span class="material-symbols-outlined">person</span> My Profile</a>
+        <a onclick="showView('editDetailsView')"><span class="material-symbols-outlined">edit_note</span> Edit Details</a>
+        <a id="adminOption" class="hidden" onclick="showView('adminPanelView')" style="background: #1a0b2e;"><span class="material-symbols-outlined">shield_person</span> Admin Control</a>
+        <a id="logoutBtn" style="color: #ef4444;"><span class="material-symbols-outlined">logout</span> Logout</a>
     </div>
 
     <header id="mainHeader" class="hidden">
-        <span style="font-size:30px; cursor:pointer; margin-right:20px" onclick="openNav()">&#9776;</span>
-        <b>Campus Hub</b>
+        <div class="header-left">
+            <span class="material-symbols-outlined" style="font-size:30px; cursor:pointer; margin-right:20px" onclick="openNav()">menu</span>
+            <b style="letter-spacing: 1px;">CGCI HUB</b>
+        </div>
+        <div class="notif-badge" onclick="showView('notificationsView')">
+            <span class="material-symbols-outlined">notifications</span>
+            <div id="notifDot" class="badge-dot"></div>
+        </div>
     </header>
 
     <div class="container">
         <div id="authPage" class="card">
-            <h2 id="authTitle">Login</h2>
+            <h2 id="authTitle" style="text-align: center; margin-bottom: 2rem;">Login</h2>
             <div id="signupFields" class="hidden">
                 <input type="text" id="regFirstname" placeholder="First Name">
                 <input type="text" id="regLastname" placeholder="Last Name">
-                <input type="text" id="regCodename" placeholder="Codename/Username">
+                <input type="text" id="regCodename" placeholder="Codename/Username (Used for @mentions)">
             </div>
             <input type="email" id="email" placeholder="Email">
             <input type="password" id="password" placeholder="Password">
-            <button id="authBtn">Sign In</button>
-            <p style="margin-top:15px">
-                <span id="toggleText">Don't have an account?</span> 
-                <span class="link-text" id="toggleAuth">Sign Up</span>
+            <div id="confirmPassField" class="hidden">
+                <input type="password" id="regConfirmPassword" placeholder="Confirm Password">
+            </div>
+            <button id="authBtn">Continue</button>
+            
+            <p style="text-align: center; margin-top:20px; font-size: 0.9rem;">
+                <span id="toggleText">New here?</span> 
+                <span class="link-text" id="toggleAuth">Create Account</span>
             </p>
-            <p id="msg" style="color:red; font-size: 0.8rem;"></p>
+            
+            <p id="msg" style="color:#ff4444; font-size: 0.8rem; text-align: center;"></p>
         </div>
 
         <div id="dashboardContainer" class="hidden" style="width: 100%; max-width: 600px;">
             <div id="welcomeView" class="card content-view">
-                <h2 style="text-align: left;">📢 Feed</h2>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                    <span class="material-symbols-outlined" style="color: var(--accent-purple);">campaign</span>
+                    <h2 style="margin:0;">Recent Updates</h2>
+                </div>
                 <div id="announcementArea"></div>
             </div>
 
+            <div id="notificationsView" class="card content-view hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 15px;">
+                    <h2 style="margin:0;">Activity</h2>
+                    <span class="link-text" onclick="markAllRead()">Mark all as read</span>
+                </div>
+                <div id="notifList"></div>
+            </div>
+
             <div id="viewDetailsView" class="card content-view hidden">
-                <h2>My Profile</h2>
-                <div id="displayData" style="text-align: left; line-height: 1.6;"></div>
+                <h2 style="border-bottom: 1px solid #333; padding-bottom: 10px;">User Profile</h2>
+                <div id="displayData" style="text-align: left; line-height: 1.8;"></div>
             </div>
 
             <div id="editDetailsView" class="card content-view hidden">
@@ -85,7 +205,7 @@
                 <input type="text" id="editFirstname" placeholder="First Name">
                 <input type="text" id="editMiddlename" placeholder="Middle Name">
                 <input type="text" id="editLastname" placeholder="Last Name">
-                <input type="text" id="editCodename" placeholder="Codename">
+                <input type="text" id="editCodename" placeholder="Codename (Use for @mentions)">
                 
                 <span class="section-label">Education</span>
                 <select id="editCourse">
@@ -109,14 +229,14 @@
                 <input type="text" id="editGuardian" placeholder="Guardian Name">
                 <input type="text" id="editGContact" placeholder="Guardian Contact">
 
-                <button id="saveProfileBtn">Save All Changes</button>
+                <button id="saveProfileBtn">Save Changes</button>
             </div>
 
             <div id="adminPanelView" class="card content-view hidden">
-                <h2>New Post</h2>
+                <h2>Create Post</h2>
                 <input type="text" id="adminPostTitle" placeholder="Title">
-                <textarea id="adminPostContent" rows="4" placeholder="Content..."></textarea>
-                <button id="publishBtn">Post Now</button>
+                <textarea id="adminPostContent" rows="5" placeholder="Share something with the campus..."></textarea>
+                <button id="publishBtn">Publish</button>
             </div>
         </div>
     </div>
@@ -125,16 +245,16 @@
         <div class="card">
             <h3>Edit Post</h3>
             <input type="text" id="editPostTitle">
-            <textarea id="editPostContent" rows="4"></textarea>
-            <button id="saveEditBtn">Update</button>
-            <button onclick="document.getElementById('editModal').classList.add('hidden')" style="background:#888">Cancel</button>
+            <textarea id="editPostContent" rows="5"></textarea>
+            <button id="saveEditBtn">Save Changes</button>
+            <button onclick="document.getElementById('editModal').classList.add('hidden')" style="background:#333; margin-top: 5px;">Discard</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCmPGWo32eP1r1kS1GF4p3bZvzdC4HkyUQ",
@@ -151,18 +271,19 @@
 
         let currentUserRole = "user";
         let displayName = "Anonymous";
+        let currentCodename = "";
+        let currentCourse = "Unset";
         let userUID = null;
         let isLoginMode = true;
         let editingPostId = null;
 
-        // --- HELPER: FORMAT TIMESTAMP ---
         function formatTime(ts) {
             if (!ts) return "Just now";
             const date = ts.toDate();
-            return date.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+            return date.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
         }
 
-        window.openNav = () => document.getElementById("mySidebar").style.width = "250px";
+        window.openNav = () => document.getElementById("mySidebar").style.width = "280px";
         window.closeNav = () => document.getElementById("mySidebar").style.width = "0";
         window.showView = (v) => {
             document.querySelectorAll('.content-view').forEach(view => view.classList.add('hidden'));
@@ -170,13 +291,32 @@
             closeNav();
         };
 
+        window.viewUserProfile = async (uid) => {
+            const snap = await getDoc(doc(db, "users", uid));
+            if (snap.exists()) {
+                const d = snap.data();
+                document.getElementById('displayData').innerHTML = `
+                    <p><b style="color:var(--accent-purple)">Identity:</b> ${d.firstname} ${d.lastname}</p>
+                    <p><b style="color:var(--accent-purple)">Handle:</b> @${d.codename || 'unnamed'}</p>
+                    <p><b style="color:var(--accent-purple)">Academic:</b> ${d.course || 'Not provided'}</p>
+                    <p><b style="color:var(--accent-purple)">Emergency:</b> ${d.guardian || 'None'}</p>
+                    <p><b style="color:var(--accent-purple)">Mobile:</b> ${d.contact || 'None'}</p>
+                `;
+                showView('viewDetailsView');
+            }
+        };
+
         async function loadProfileData(uid) {
             const snap = await getDoc(doc(db, "users", uid));
             if (snap.exists()) {
                 const d = snap.data();
                 currentUserRole = d.role || "user";
+                currentCodename = d.codename || "";
                 displayName = d.codename || `${d.firstname} ${d.lastname}`;
+                currentCourse = d.course || "N/A";
+
                 if(currentUserRole === "admin") document.getElementById('adminOption').classList.remove('hidden');
+                
                 document.getElementById('editFirstname').value = d.firstname || "";
                 document.getElementById('editMiddlename').value = d.middlename || "";
                 document.getElementById('editLastname').value = d.lastname || "";
@@ -190,14 +330,105 @@
                 document.getElementById('editMother').value = d.mother || "";
                 document.getElementById('editGuardian').value = d.guardian || "";
                 document.getElementById('editGContact').value = d.gcontact || "";
-                document.getElementById('displayData').innerHTML = `
-                    <p><b>Name:</b> ${d.firstname} ${d.lastname}</p>
-                    <p><b>Codename:</b> ${d.codename || 'None'}</p>
-                    <p><b>Course:</b> ${d.course || 'Not Set'}</p>
-                    <p><b>Guardian:</b> ${d.guardian || 'Not Set'}</p>
-                    <p><b>Contact:</b> ${d.contact || 'Not Set'}</p>
-                `;
             }
+        }
+
+        function startNotificationListener() {
+            if (!userUID) return;
+            const q = query(collection(db, "notifications"), where("targetUID", "==", userUID), orderBy("timestamp", "desc"), limit(20));
+            onSnapshot(q, (snap) => {
+                const list = document.getElementById('notifList');
+                const dot = document.getElementById('notifDot');
+                let unreadCount = 0;
+                list.innerHTML = "";
+
+                if(snap.empty) {
+                    list.innerHTML = "<p style='text-align:center; color:#666; margin-top:20px;'>No recent activity</p>";
+                }
+
+                snap.forEach(d => {
+                    const n = d.data();
+                    if(!n.read) unreadCount++;
+                    list.innerHTML += `
+                        <div class="notif-item ${n.read ? '' : 'notif-unread'}" onclick="markRead('${d.id}')">
+                            <b>${n.fromName}</b> ${n.message}
+                            <div class="comment-time">${formatTime(n.timestamp)}</div>
+                        </div>
+                    `;
+                });
+                dot.style.display = unreadCount > 0 ? "block" : "none";
+            });
+        }
+
+        window.markRead = async (id) => {
+            await updateDoc(doc(db, "notifications", id), { read: true });
+        };
+
+        window.markAllRead = async () => {
+            const q = query(collection(db, "notifications"), where("targetUID", "==", userUID), where("read", "==", false));
+            const snap = await getDocs(q);
+            const batchPromises = snap.docs.map(d => updateDoc(doc(db, "notifications", d.id), { read: true }));
+            await Promise.all(batchPromises);
+        };
+
+        window.postComment = async (id) => {
+            const input = document.getElementById(`comment-input-${id}`);
+            const text = input.value.trim();
+            if(!text) return;
+
+            await addDoc(collection(db, "comments"), { 
+                postId: id, 
+                text: text, 
+                author: displayName, 
+                authorCourse: currentCourse,
+                authorUID: userUID,
+                timestamp: serverTimestamp() 
+            });
+
+            const mentions = text.match(/@(\w+)/g);
+            if(mentions) {
+                mentions.forEach(async (m) => {
+                    const targetHandle = m.substring(1);
+                    const userQ = query(collection(db, "users"), where("codename", "==", targetHandle));
+                    const userSnap = await getDocs(userQ);
+                    userSnap.forEach(async (uDoc) => {
+                        if(uDoc.id !== userUID) {
+                            await addDoc(collection(db, "notifications"), {
+                                targetUID: uDoc.id,
+                                fromName: displayName,
+                                message: "mentioned you in a comment.",
+                                read: false,
+                                timestamp: serverTimestamp()
+                            });
+                        }
+                    });
+                });
+            }
+
+            const threadQ = query(collection(db, "comments"), where("postId", "==", id));
+            const threadSnap = await getDocs(threadQ);
+            const notifiedUsers = new Set();
+            notifiedUsers.add(userUID); 
+
+            threadSnap.forEach(async (cDoc) => {
+                const cData = cDoc.data();
+                if(!notifiedUsers.has(cData.authorUID)) {
+                    await addDoc(collection(db, "notifications"), {
+                        targetUID: cData.authorUID,
+                        fromName: displayName,
+                        message: "also commented on a post you're following.",
+                        read: false,
+                        timestamp: serverTimestamp()
+                    });
+                    notifiedUsers.add(cData.authorUID);
+                }
+            });
+
+            input.value = "";
+        };
+
+        function processText(text) {
+            return text.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
         }
 
         window.toggleComments = (id) => {
@@ -205,20 +436,8 @@
             section.classList.toggle('hidden');
         };
 
-        window.postComment = async (id) => {
-            const input = document.getElementById(`comment-input-${id}`);
-            if(!input.value.trim()) return;
-            await addDoc(collection(db, "comments"), { 
-                postId: id, 
-                text: input.value, 
-                author: displayName, 
-                timestamp: serverTimestamp() 
-            });
-            input.value = "";
-        };
-
         window.deletePost = async (id) => { 
-            if(confirm("Delete this post?")) await deleteDoc(doc(db, "announcements", id)); 
+            if(confirm("Permanently remove this post?")) await deleteDoc(doc(db, "announcements", id)); 
         };
 
         window.openEditModal = (id, t, c) => { 
@@ -238,8 +457,14 @@
                     const c = d.data();
                     list.innerHTML += `
                         <div class="comment-box">
-                            <b>${c.author}</b>: ${c.text}
-                            <span class="comment-time">${formatTime(c.timestamp)}</span>
+                            <div class="comment-header">
+                                <div>
+                                    <b class="link-text" onclick="viewUserProfile('${c.authorUID}')">${c.author}</b>
+                                    <span class="course-tag">${c.authorCourse || ''}</span>
+                                </div>
+                                <span class="comment-time">${formatTime(c.timestamp)}</span>
+                            </div>
+                            <div style="margin-top:2px;">${processText(c.text)}</div>
                         </div>`;
                 });
             });
@@ -254,23 +479,28 @@
                     const p = d.data();
                     const adminBtn = currentUserRole === 'admin' ? `
                         <div class="admin-controls">
-                            <button class="btn-small" style="background:#1976d2" onclick="openEditModal('${d.id}', '${p.title}', '${p.content}')">Edit</button>
-                            <button class="btn-small" style="background:var(--danger)" onclick="deletePost('${d.id}')">Del</button>
+                            <button class="btn-small" onclick="openEditModal('${d.id}', '${p.title}', '${p.content}')">Edit</button>
+                            <button class="btn-small" style="color:#ef4444" onclick="deletePost('${d.id}')">Del</button>
                         </div>` : "";
 
                     area.innerHTML += `
                     <div class="post-card">${adminBtn}
-                        <h4>📢 ${p.title}</h4>
-                        <span class="timestamp">Posted on: ${formatTime(p.timestamp)}</span>
-                        <p>${p.content}</p>
+                        <div class="post-title-row">
+                             <span class="material-symbols-outlined" style="font-size:1.2rem; color:var(--accent-purple)">notifications</span>
+                             <h4 style="margin:0;">${p.title}</h4>
+                        </div>
+                        <span class="timestamp">${formatTime(p.timestamp)}</span>
+                        <p style="color:#ddd; margin-top:10px;">${p.content}</p>
                         <div class="post-actions">
-                            <span class="action-btn" onclick="toggleComments('${d.id}')">💬 Comments</span>
+                            <span class="action-btn" onclick="toggleComments('${d.id}')">
+                                <span class="material-symbols-outlined" style="font-size:1.1rem">chat_bubble</span> Comments
+                            </span>
                         </div>
                         <div id="comment-section-${d.id}" class="comment-section hidden">
                             <div id="comments-list-${d.id}"></div>
-                            <div style="display:flex; gap:5px; margin-top:10px">
-                                <input type="text" id="comment-input-${d.id}" placeholder="Write a comment..." style="margin:0">
-                                <button onclick="postComment('${d.id}')" style="width:auto; margin:0; padding:0 15px">Send</button>
+                            <div style="display:flex; gap:10px; margin-top:15px">
+                                <input type="text" id="comment-input-${d.id}" placeholder="Use @codename to mention..." style="margin:0">
+                                <button onclick="postComment('${d.id}')" style="width:auto; margin:0; padding:0 20px">Send</button>
                             </div>
                         </div>
                     </div>`;
@@ -287,7 +517,9 @@
                 document.getElementById('dashboardContainer').classList.remove('hidden');
                 await loadProfileData(user.uid);
                 startAnnouncementListener();
+                startNotificationListener();
             } else {
+                userUID = null;
                 document.getElementById('authPage').classList.remove('hidden');
                 document.getElementById('mainHeader').classList.add('hidden');
                 document.getElementById('dashboardContainer').classList.add('hidden');
@@ -310,41 +542,97 @@
                 guardian: document.getElementById('editGuardian').value,
                 gcontact: document.getElementById('editGContact').value
             });
-            alert("Profile Information Saved!");
+            alert("Success: Details Updated");
             loadProfileData(userUID);
         };
 
+        // UPDATED TOGGLE AUTH LOGIC
         document.getElementById('toggleAuth').onclick = () => {
             isLoginMode = !isLoginMode;
-            document.getElementById('authTitle').innerText = isLoginMode ? "Login" : "Sign Up";
-            document.getElementById('authBtn').innerText = isLoginMode ? "Sign In" : "Register";
+            
+            const authTitle = document.getElementById('authTitle');
+            const authBtn = document.getElementById('authBtn');
+            const toggleText = document.getElementById('toggleText');
+            const toggleLink = document.getElementById('toggleAuth');
+
+            if (isLoginMode) {
+                authTitle.innerText = "Login";
+                authBtn.innerText = "Continue";
+                toggleText.innerText = "New here?";
+                toggleLink.innerText = "Create Account";
+            } else {
+                authTitle.innerText = "Join Hub";
+                authBtn.innerText = "Register";
+                toggleText.innerText = "Already have an account?";
+                toggleLink.innerText = "Login";
+            }
+
             document.getElementById('signupFields').classList.toggle('hidden', isLoginMode);
+            document.getElementById('confirmPassField').classList.toggle('hidden', isLoginMode);
         };
 
         document.getElementById('authBtn').onclick = async () => {
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
+            const msg = document.getElementById('msg');
+            msg.innerText = "";
             try {
                 if (isLoginMode) {
                     await signInWithEmailAndPassword(auth, email, pass);
                 } else {
+                    const confirmPass = document.getElementById('regConfirmPassword').value;
+                    const fName = document.getElementById('regFirstname').value.trim();
+                    const lName = document.getElementById('regLastname').value.trim();
+                    const cName = document.getElementById('regCodename').value.trim();
+
+                    if(!fName || !lName || !cName) {
+                        msg.innerText = "Error: Name and Codename are required.";
+                        return;
+                    }
+
+                    if (pass !== confirmPass) {
+                        msg.innerText = "Error: Passwords do not match.";
+                        return;
+                    }
+
                     const res = await createUserWithEmailAndPassword(auth, email, pass);
                     await setDoc(doc(db, "users", res.user.uid), {
-                        firstname: document.getElementById('regFirstname').value,
-                        lastname: document.getElementById('regLastname').value,
-                        codename: document.getElementById('regCodename').value,
+                        firstname: fName,
+                        lastname: lName,
+                        codename: cName,
                         role: "user"
                     });
                 }
-            } catch (e) { document.getElementById('msg').innerText = e.message; }
+            } catch (e) { msg.innerText = "Auth Error: " + e.message; }
         };
 
         document.getElementById('publishBtn').onclick = async () => {
-            await addDoc(collection(db, "announcements"), { 
-                title: document.getElementById('adminPostTitle').value, 
-                content: document.getElementById('adminPostContent').value, 
+            const title = document.getElementById('adminPostTitle').value;
+            const content = document.getElementById('adminPostContent').value;
+            
+            if(!title || !content) return alert("Please fill all fields");
+
+            const postRef = await addDoc(collection(db, "announcements"), { 
+                title: title, 
+                content: content, 
                 timestamp: serverTimestamp() 
             });
+
+            const usersSnap = await getDocs(collection(db, "users"));
+            usersSnap.forEach(async (uDoc) => {
+                if(uDoc.id !== userUID) {
+                    await addDoc(collection(db, "notifications"), {
+                        targetUID: uDoc.id,
+                        fromName: "Admin",
+                        message: `posted a new update: ${title}`,
+                        read: false,
+                        timestamp: serverTimestamp()
+                    });
+                }
+            });
+
+            document.getElementById('adminPostTitle').value = "";
+            document.getElementById('adminPostContent').value = "";
             showView('welcomeView');
         };
 
@@ -359,4 +647,4 @@
         document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.reload());
     </script>
 </body>
-</html>
+</html> 
