@@ -3,132 +3,360 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FM Static - Tonight | Lyrics</title>
+    <title>Campus Hub - Timestamps Enabled</title>
     <style>
-        :root {
-            --bg-color: #0f0c29;
-            --accent-color: #00d2ff;
-            --text-color: #e0e0e0;
-            --glass-bg: rgba(255, 255, 255, 0.1);
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
-            color: var(--text-color);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 600px;
-            width: 100%;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            text-align: center;
-        }
-
-        h1 {
-            margin-bottom: 5px;
-            color: var(--accent-color);
-            font-size: 2.5rem;
-            letter-spacing: 2px;
-        }
-
-        h2 {
-            font-weight: 300;
-            margin-bottom: 30px;
-            opacity: 0.8;
-        }
-
-        .lyrics-box {
-            line-height: 1.8;
-            font-size: 1.1rem;
-            max-height: 500px;
-            overflow-y: auto;
-            padding-right: 15px;
-        }
-
-        /* Scrollbar Styling */
-        .lyrics-box::-webkit-scrollbar {
-            width: 6px;
-        }
-        .lyrics-box::-webkit-scrollbar-thumb {
-            background: var(--accent-color);
-            border-radius: 10px;
-        }
-
-        .chorus {
-            font-weight: bold;
-            color: #fff;
-            margin: 20px 0;
-            border-left: 3px solid var(--accent-color);
-            padding-left: 15px;
-        }
-
-        footer {
-            margin-top: 30px;
-            font-size: 0.8rem;
-            opacity: 0.6;
-        }
+        :root { --primary: #2e7d32; --secondary: #4caf50; --bg: #f1f8e9; --admin-gold: #fbc02d; --danger: #d32f2f; --white: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; }
+        .sidebar { height: 100%; width: 0; position: fixed; z-index: 1000; top: 0; left: 0; background-color: var(--primary); overflow-x: hidden; transition: 0.5s; padding-top: 60px; }
+        .sidebar a { padding: 15px 25px; text-decoration: none; font-size: 1.1rem; color: white; display: block; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        header { background: var(--primary); color: white; padding: 15px; display: flex; align-items: center; position: sticky; top: 0; z-index: 999; }
+        .container { display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .card { background: var(--white); padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 500px; margin-bottom: 20px; }
+        .hidden { display: none !important; }
+        input, textarea, select { width: 95%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; margin-top: 10px; }
+        .link-text { color: var(--primary); cursor: pointer; text-decoration: underline; font-size: 0.9rem; }
+        .section-label { font-weight: bold; color: var(--primary); margin-top: 15px; display: block; border-bottom: 1px solid #eee; padding-bottom: 5px; text-align: left; }
+        
+        /* POSTS & COMMENTS */
+        .post-card { background: #fffde7; border-left: 6px solid var(--admin-gold); padding: 20px; border-radius: 10px; text-align: left; margin-bottom: 25px; position: relative; }
+        .admin-controls { position: absolute; top: 10px; right: 10px; display: flex; gap: 5px; }
+        .btn-small { width: auto; padding: 5px 10px; font-size: 0.7rem; margin: 0; }
+        .post-actions { display: flex; gap: 15px; margin: 10px 0; font-size: 0.85rem; color: var(--primary); font-weight: bold; }
+        .action-btn { cursor: pointer; padding: 5px 8px; border-radius: 5px; transition: 0.2s; }
+        .action-btn:hover { background: rgba(0,0,0,0.05); }
+        
+        .timestamp { font-size: 0.7rem; color: #777; display: block; margin-top: -10px; margin-bottom: 10px; }
+        .comment-section { margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 10px; }
+        .comment-box { background: #f8f9fa; padding: 8px; border-radius: 8px; margin-top: 5px; border: 1px solid #eee; font-size: 0.85rem; }
+        .comment-time { font-size: 0.65rem; color: #999; display: block; margin-top: 2px; }
+        
+        #editModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: flex; justify-content: center; align-items: center; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>Tonight</h1>
-        <h2>FM Static</h2>
-    </header>
-
-    <div class="lyrics-box">
-        <p>I remember the day I left you at the station<br>
-        I shared a glass of wine and a conversation<br>
-        It was the first time I'd ever seen you cry</p>
-
-        <p>I remember the way you looked in the morning<br>
-        The way you laughed without any warning<br>
-        And I knew right then that I'd never say goodbye</p>
-
-        <div class="chorus">
-            Because tonight will be the night that I will fall for you<br>
-            Over again, don't make me change my mind<br>
-            Or I won't live to see another day, I swear it's true<br>
-            Because a girl like you is impossible to find
-        </div>
-
-        <p>It's been a while since I've seen your face<br>
-        It's been a while since I've left this place<br>
-        And I'm starting to think that I might never go back</p>
-
-        <p>I'm starting to think that I'm losing my mind<br>
-        I'm starting to think that I'm left behind<br>
-        And I'm starting to think that I'm under attack</p>
-
-        <div class="chorus">
-            Because tonight will be the night that I will fall for you<br>
-            Over again, don't make me change my mind<br>
-            Or I won't live to see another day, I swear it's true<br>
-            Because a girl like you is impossible to find
-        </div>
-
-        <p>And I'm falling, and I'm falling...<br>
-        Tonight will be the night that I will fall for you<br>
-        Over again, don't make me change my mind</p>
+    <div id="mySidebar" class="sidebar">
+        <a onclick="closeNav()" style="font-size:36px; position:absolute; top:10px; right:25px">&times;</a>
+        <a onclick="showView('welcomeView')">🏠 Home Feed</a>
+        <a onclick="showView('viewDetailsView')">📄 My Profile</a>
+        <a onclick="showView('editDetailsView')">✏️ Edit Details</a>
+        <a id="adminOption" class="hidden" onclick="showView('adminPanelView')" style="background: #1b5e20;">👑 Admin Control</a>
+        <a id="logoutBtn" style="color: #ffcdd2;">🚪 Logout</a>
     </div>
 
-    <footer>
-        Album: Critically Ashamed (2006)
-    </footer>
-</div>
+    <header id="mainHeader" class="hidden">
+        <span style="font-size:30px; cursor:pointer; margin-right:20px" onclick="openNav()">&#9776;</span>
+        <b>Campus Hub</b>
+    </header>
 
+    <div class="container">
+        <div id="authPage" class="card">
+            <h2 id="authTitle">Login</h2>
+            <div id="signupFields" class="hidden">
+                <input type="text" id="regFirstname" placeholder="First Name">
+                <input type="text" id="regLastname" placeholder="Last Name">
+                <input type="text" id="regCodename" placeholder="Codename/Username">
+            </div>
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="password" placeholder="Password">
+            <button id="authBtn">Sign In</button>
+            <p style="margin-top:15px">
+                <span id="toggleText">Don't have an account?</span> 
+                <span class="link-text" id="toggleAuth">Sign Up</span>
+            </p>
+            <p id="msg" style="color:red; font-size: 0.8rem;"></p>
+        </div>
+
+        <div id="dashboardContainer" class="hidden" style="width: 100%; max-width: 600px;">
+            <div id="welcomeView" class="card content-view">
+                <h2 style="text-align: left;">📢 Feed</h2>
+                <div id="announcementArea"></div>
+            </div>
+
+            <div id="viewDetailsView" class="card content-view hidden">
+                <h2>My Profile</h2>
+                <div id="displayData" style="text-align: left; line-height: 1.6;"></div>
+            </div>
+
+            <div id="editDetailsView" class="card content-view hidden">
+                <h2>Update Information</h2>
+                <span class="section-label">Basic Information</span>
+                <input type="text" id="editFirstname" placeholder="First Name">
+                <input type="text" id="editMiddlename" placeholder="Middle Name">
+                <input type="text" id="editLastname" placeholder="Last Name">
+                <input type="text" id="editCodename" placeholder="Codename">
+                
+                <span class="section-label">Education</span>
+                <select id="editCourse">
+                    <option value="">Select Course</option>
+                    <option value="BSBA">BSBA</option>
+                    <option value="BAPS">BAPS</option>
+                    <option value="BSCS">BSCS</option>
+                    <option value="BEED">BEED</option>
+                    <option value="BSED">BSED</option>
+                </select>
+
+                <span class="section-label">Birth & Contact</span>
+                <input type="date" id="editBirthdate">
+                <input type="text" id="editBirthplace" placeholder="Birthplace">
+                <input type="text" id="editAddress" placeholder="Full Address">
+                <input type="text" id="editContact" placeholder="Contact Number">
+
+                <span class="section-label">Family Background</span>
+                <input type="text" id="editFather" placeholder="Father's Name">
+                <input type="text" id="editMother" placeholder="Mother's Maiden Name">
+                <input type="text" id="editGuardian" placeholder="Guardian Name">
+                <input type="text" id="editGContact" placeholder="Guardian Contact">
+
+                <button id="saveProfileBtn">Save All Changes</button>
+            </div>
+
+            <div id="adminPanelView" class="card content-view hidden">
+                <h2>New Post</h2>
+                <input type="text" id="adminPostTitle" placeholder="Title">
+                <textarea id="adminPostContent" rows="4" placeholder="Content..."></textarea>
+                <button id="publishBtn">Post Now</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editModal" class="hidden">
+        <div class="card">
+            <h3>Edit Post</h3>
+            <input type="text" id="editPostTitle">
+            <textarea id="editPostContent" rows="4"></textarea>
+            <button id="saveEditBtn">Update</button>
+            <button onclick="document.getElementById('editModal').classList.add('hidden')" style="background:#888">Cancel</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCmPGWo32eP1r1kS1GF4p3bZvzdC4HkyUQ",
+            authDomain: "mysundayproject-50d65.firebaseapp.com",
+            projectId: "mysundayproject-50d65",
+            storageBucket: "mysundayproject-50d65.firebasestorage.app",
+            messagingSenderId: "212383066252",
+            appId: "1:212383066252:web:86cb012a641ca0039db3a9"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUserRole = "user";
+        let displayName = "Anonymous";
+        let userUID = null;
+        let isLoginMode = true;
+        let editingPostId = null;
+
+        // --- HELPER: FORMAT TIMESTAMP ---
+        function formatTime(ts) {
+            if (!ts) return "Just now";
+            const date = ts.toDate();
+            return date.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+        }
+
+        window.openNav = () => document.getElementById("mySidebar").style.width = "250px";
+        window.closeNav = () => document.getElementById("mySidebar").style.width = "0";
+        window.showView = (v) => {
+            document.querySelectorAll('.content-view').forEach(view => view.classList.add('hidden'));
+            document.getElementById(v).classList.remove('hidden');
+            closeNav();
+        };
+
+        async function loadProfileData(uid) {
+            const snap = await getDoc(doc(db, "users", uid));
+            if (snap.exists()) {
+                const d = snap.data();
+                currentUserRole = d.role || "user";
+                displayName = d.codename || `${d.firstname} ${d.lastname}`;
+                if(currentUserRole === "admin") document.getElementById('adminOption').classList.remove('hidden');
+                document.getElementById('editFirstname').value = d.firstname || "";
+                document.getElementById('editMiddlename').value = d.middlename || "";
+                document.getElementById('editLastname').value = d.lastname || "";
+                document.getElementById('editCodename').value = d.codename || "";
+                document.getElementById('editCourse').value = d.course || "";
+                document.getElementById('editBirthdate').value = d.birthdate || "";
+                document.getElementById('editBirthplace').value = d.birthplace || "";
+                document.getElementById('editAddress').value = d.address || "";
+                document.getElementById('editContact').value = d.contact || "";
+                document.getElementById('editFather').value = d.father || "";
+                document.getElementById('editMother').value = d.mother || "";
+                document.getElementById('editGuardian').value = d.guardian || "";
+                document.getElementById('editGContact').value = d.gcontact || "";
+                document.getElementById('displayData').innerHTML = `
+                    <p><b>Name:</b> ${d.firstname} ${d.lastname}</p>
+                    <p><b>Codename:</b> ${d.codename || 'None'}</p>
+                    <p><b>Course:</b> ${d.course || 'Not Set'}</p>
+                    <p><b>Guardian:</b> ${d.guardian || 'Not Set'}</p>
+                    <p><b>Contact:</b> ${d.contact || 'Not Set'}</p>
+                `;
+            }
+        }
+
+        window.toggleComments = (id) => {
+            const section = document.getElementById(`comment-section-${id}`);
+            section.classList.toggle('hidden');
+        };
+
+        window.postComment = async (id) => {
+            const input = document.getElementById(`comment-input-${id}`);
+            if(!input.value.trim()) return;
+            await addDoc(collection(db, "comments"), { 
+                postId: id, 
+                text: input.value, 
+                author: displayName, 
+                timestamp: serverTimestamp() 
+            });
+            input.value = "";
+        };
+
+        window.deletePost = async (id) => { 
+            if(confirm("Delete this post?")) await deleteDoc(doc(db, "announcements", id)); 
+        };
+
+        window.openEditModal = (id, t, c) => { 
+            editingPostId = id; 
+            document.getElementById('editPostTitle').value = t; 
+            document.getElementById('editPostContent').value = c; 
+            document.getElementById('editModal').classList.remove('hidden'); 
+        };
+
+        function startCommentListener(postId) {
+            const q = query(collection(db, "comments"), where("postId", "==", postId), orderBy("timestamp", "asc"));
+            onSnapshot(q, (snap) => {
+                const list = document.getElementById(`comments-list-${postId}`);
+                if(!list) return;
+                list.innerHTML = "";
+                snap.forEach(d => {
+                    const c = d.data();
+                    list.innerHTML += `
+                        <div class="comment-box">
+                            <b>${c.author}</b>: ${c.text}
+                            <span class="comment-time">${formatTime(c.timestamp)}</span>
+                        </div>`;
+                });
+            });
+        }
+
+        function startAnnouncementListener() {
+            const q = query(collection(db, "announcements"), orderBy("timestamp", "desc"));
+            onSnapshot(q, (snap) => {
+                const area = document.getElementById('announcementArea');
+                area.innerHTML = "";
+                snap.forEach(d => {
+                    const p = d.data();
+                    const adminBtn = currentUserRole === 'admin' ? `
+                        <div class="admin-controls">
+                            <button class="btn-small" style="background:#1976d2" onclick="openEditModal('${d.id}', '${p.title}', '${p.content}')">Edit</button>
+                            <button class="btn-small" style="background:var(--danger)" onclick="deletePost('${d.id}')">Del</button>
+                        </div>` : "";
+
+                    area.innerHTML += `
+                    <div class="post-card">${adminBtn}
+                        <h4>📢 ${p.title}</h4>
+                        <span class="timestamp">Posted on: ${formatTime(p.timestamp)}</span>
+                        <p>${p.content}</p>
+                        <div class="post-actions">
+                            <span class="action-btn" onclick="toggleComments('${d.id}')">💬 Comments</span>
+                        </div>
+                        <div id="comment-section-${d.id}" class="comment-section hidden">
+                            <div id="comments-list-${d.id}"></div>
+                            <div style="display:flex; gap:5px; margin-top:10px">
+                                <input type="text" id="comment-input-${d.id}" placeholder="Write a comment..." style="margin:0">
+                                <button onclick="postComment('${d.id}')" style="width:auto; margin:0; padding:0 15px">Send</button>
+                            </div>
+                        </div>
+                    </div>`;
+                    startCommentListener(d.id);
+                });
+            });
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                userUID = user.uid;
+                document.getElementById('authPage').classList.add('hidden');
+                document.getElementById('mainHeader').classList.remove('hidden');
+                document.getElementById('dashboardContainer').classList.remove('hidden');
+                await loadProfileData(user.uid);
+                startAnnouncementListener();
+            } else {
+                document.getElementById('authPage').classList.remove('hidden');
+                document.getElementById('mainHeader').classList.add('hidden');
+                document.getElementById('dashboardContainer').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('saveProfileBtn').onclick = async () => {
+            await updateDoc(doc(db, "users", userUID), {
+                firstname: document.getElementById('editFirstname').value,
+                middlename: document.getElementById('editMiddlename').value,
+                lastname: document.getElementById('editLastname').value,
+                codename: document.getElementById('editCodename').value,
+                course: document.getElementById('editCourse').value,
+                birthdate: document.getElementById('editBirthdate').value,
+                birthplace: document.getElementById('editBirthplace').value,
+                address: document.getElementById('editAddress').value,
+                contact: document.getElementById('editContact').value,
+                father: document.getElementById('editFather').value,
+                mother: document.getElementById('editMother').value,
+                guardian: document.getElementById('editGuardian').value,
+                gcontact: document.getElementById('editGContact').value
+            });
+            alert("Profile Information Saved!");
+            loadProfileData(userUID);
+        };
+
+        document.getElementById('toggleAuth').onclick = () => {
+            isLoginMode = !isLoginMode;
+            document.getElementById('authTitle').innerText = isLoginMode ? "Login" : "Sign Up";
+            document.getElementById('authBtn').innerText = isLoginMode ? "Sign In" : "Register";
+            document.getElementById('signupFields').classList.toggle('hidden', isLoginMode);
+        };
+
+        document.getElementById('authBtn').onclick = async () => {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            try {
+                if (isLoginMode) {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                } else {
+                    const res = await createUserWithEmailAndPassword(auth, email, pass);
+                    await setDoc(doc(db, "users", res.user.uid), {
+                        firstname: document.getElementById('regFirstname').value,
+                        lastname: document.getElementById('regLastname').value,
+                        codename: document.getElementById('regCodename').value,
+                        role: "user"
+                    });
+                }
+            } catch (e) { document.getElementById('msg').innerText = e.message; }
+        };
+
+        document.getElementById('publishBtn').onclick = async () => {
+            await addDoc(collection(db, "announcements"), { 
+                title: document.getElementById('adminPostTitle').value, 
+                content: document.getElementById('adminPostContent').value, 
+                timestamp: serverTimestamp() 
+            });
+            showView('welcomeView');
+        };
+
+        document.getElementById('saveEditBtn').onclick = async () => {
+            await updateDoc(doc(db, "announcements", editingPostId), { 
+                title: document.getElementById('editPostTitle').value, 
+                content: document.getElementById('editPostContent').value 
+            });
+            document.getElementById('editModal').classList.add('hidden');
+        };
+
+        document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.reload());
+    </script>
 </body>
 </html>
