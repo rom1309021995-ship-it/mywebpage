@@ -114,7 +114,17 @@
         .comment-box { background: #1a1a1a; padding: 10px; border-radius: 8px; margin-top: 8px; border: 1px solid #222; font-size: 0.85rem; }
         .comment-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
         .comment-time { font-size: 0.65rem; color: #555; }
-        .course-tag { font-size: 0.65rem; color: var(--accent-purple); background: rgba(168, 85, 247, 0.1); padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 5px; }
+        
+        /* UPDATED COURSE TAG STYLE */
+        .course-tag { 
+            font-size: 0.65rem; 
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            font-weight: 800; 
+            margin-left: 5px; 
+            text-transform: uppercase;
+            color: #fff;
+        }
 
         .mention { color: #38bdf8; font-weight: bold; }
         
@@ -277,6 +287,20 @@
         let isLoginMode = true;
         let editingPostId = null;
 
+        // HELPER: GET DYNAMIC COLORS FOR COURSES
+        function getCourseColor(course, role) {
+            if (role === "admin") return "#a855f7"; // Admin is Purple
+            const c = course ? course.toUpperCase() : "";
+            switch(c) {
+                case 'BSCS': return '#ef4444'; // Red
+                case 'BAPS': return '#4b5563'; // Gray/Black
+                case 'BSED': return '#38bdf8'; // Light Blue
+                case 'BEED': return '#1d4ed8'; // Dark Blue
+                case 'BSBA': return '#eab308'; // Yellow
+                default: return '#333';        // Neutral default
+            }
+        }
+
         function formatTime(ts) {
             if (!ts) return "Just now";
             const date = ts.toDate();
@@ -382,6 +406,7 @@
                 author: displayName, 
                 authorCourse: currentCourse,
                 authorUID: userUID,
+                authorRole: currentUserRole, // Saved for color coding
                 timestamp: serverTimestamp() 
             });
 
@@ -404,25 +429,6 @@
                     });
                 });
             }
-
-            const threadQ = query(collection(db, "comments"), where("postId", "==", id));
-            const threadSnap = await getDocs(threadQ);
-            const notifiedUsers = new Set();
-            notifiedUsers.add(userUID); 
-
-            threadSnap.forEach(async (cDoc) => {
-                const cData = cDoc.data();
-                if(!notifiedUsers.has(cData.authorUID)) {
-                    await addDoc(collection(db, "notifications"), {
-                        targetUID: cData.authorUID,
-                        fromName: displayName,
-                        message: "also commented on a post you're following.",
-                        read: false,
-                        timestamp: serverTimestamp()
-                    });
-                    notifiedUsers.add(cData.authorUID);
-                }
-            });
 
             input.value = "";
         };
@@ -447,6 +453,7 @@
             document.getElementById('editModal').classList.remove('hidden'); 
         };
 
+        // UPDATED LISTENER WITH COLOR LOGIC
         function startCommentListener(postId) {
             const q = query(collection(db, "comments"), where("postId", "==", postId), orderBy("timestamp", "asc"));
             onSnapshot(q, (snap) => {
@@ -455,12 +462,14 @@
                 list.innerHTML = "";
                 snap.forEach(d => {
                     const c = d.data();
+                    const tagColor = getCourseColor(c.authorCourse, c.authorRole);
+                    
                     list.innerHTML += `
                         <div class="comment-box">
                             <div class="comment-header">
                                 <div>
                                     <b class="link-text" onclick="viewUserProfile('${c.authorUID}')">${c.author}</b>
-                                    <span class="course-tag">${c.authorCourse || ''}</span>
+                                    <span class="course-tag" style="background-color: ${tagColor}">${c.authorCourse || 'Guest'}</span>
                                 </div>
                                 <span class="comment-time">${formatTime(c.timestamp)}</span>
                             </div>
@@ -526,6 +535,8 @@
             }
         });
 
+        document.getElementById('logoutBtn').onclick = () => signOut(auth);
+
         document.getElementById('saveProfileBtn').onclick = async () => {
             await updateDoc(doc(db, "users", userUID), {
                 firstname: document.getElementById('editFirstname').value,
@@ -546,10 +557,8 @@
             loadProfileData(userUID);
         };
 
-        // UPDATED TOGGLE AUTH LOGIC
         document.getElementById('toggleAuth').onclick = () => {
             isLoginMode = !isLoginMode;
-            
             const authTitle = document.getElementById('authTitle');
             const authBtn = document.getElementById('authBtn');
             const toggleText = document.getElementById('toggleText');
@@ -612,7 +621,7 @@
             
             if(!title || !content) return alert("Please fill all fields");
 
-            const postRef = await addDoc(collection(db, "announcements"), { 
+            await addDoc(collection(db, "announcements"), { 
                 title: title, 
                 content: content, 
                 timestamp: serverTimestamp() 
@@ -643,8 +652,6 @@
             });
             document.getElementById('editModal').classList.add('hidden');
         };
-
-        document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.reload());
     </script>
 </body>
-</html> 
+</html>
