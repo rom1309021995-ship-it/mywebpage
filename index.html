@@ -25,9 +25,19 @@
         }
 
         /* SIDEBAR */
-        .sidebar { height: 100%; width: 0; position: fixed; z-index: 1000; top: 0; left: 0; background-color: #000; overflow-x: hidden; transition: 0.5s; padding-top: 60px; border-right: var(--border-glow); }
+        .sidebar { height: 100%; width: 0; position: fixed; z-index: 1000; top: 0; left: 0; background-color: #000; overflow-x: hidden; transition: 0.5s; padding-top: 20px; border-right: var(--border-glow); }
         .sidebar a { padding: 15px 25px; text-decoration: none; font-size: 1rem; color: #ccc; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.3s; }
         .sidebar a:hover { color: var(--accent-purple); text-shadow: var(--glow); }
+
+        /* Sidebar Profile Header */
+        .sidebar-profile {
+            padding: 20px 25px;
+            border-bottom: 1px solid #222;
+            margin-bottom: 10px;
+        }
+        .sidebar-profile .user-name { font-weight: bold; color: white; display: block; font-size: 1.1rem; }
+        .sidebar-profile .user-handle { color: var(--accent-purple); font-size: 0.85rem; display: block; }
+        .sidebar-profile .user-course { color: #666; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; display: block; }
 
         header { 
             background: rgba(10, 10, 10, 0.8); 
@@ -115,7 +125,6 @@
         .comment-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
         .comment-time { font-size: 0.65rem; color: #555; }
         
-        /* UPDATED COURSE TAG STYLE */
         .course-tag { 
             font-size: 0.65rem; 
             padding: 2px 8px; 
@@ -137,17 +146,21 @@
         @media (max-width: 480px) {
             .card { padding: 1.5rem; }
             header { font-size: 0.9rem; }
-            .sidebar { padding-top: 80px; }
+            .sidebar { padding-top: 40px; }
         }
     </style>
 </head>
 <body>
 
     <div id="mySidebar" class="sidebar">
-        <a onclick="closeNav()" style="font-size:36px; position:absolute; top:10px; right:25px">&times;</a>
+        <div class="sidebar-profile">
+            <span id="sideName" class="user-name">Loading...</span>
+            <span id="sideHandle" class="user-handle">@codename</span>
+            <span id="sideCourse" class="user-course">Course</span>
+        </div>
         <a onclick="showView('welcomeView')"><span class="material-symbols-outlined">home</span> Feed</a>
         <a onclick="showView('notificationsView')"><span class="material-symbols-outlined">notifications</span> Activity</a>
-        <a onclick="showView('viewDetailsView')"><span class="material-symbols-outlined">person</span> My Profile</a>
+        <a onclick="showMyProfile()"><span class="material-symbols-outlined">person</span> My Profile</a>
         <a onclick="showView('editDetailsView')"><span class="material-symbols-outlined">edit_note</span> Edit Details</a>
         <a id="adminOption" class="hidden" onclick="showView('adminPanelView')" style="background: #1a0b2e;"><span class="material-symbols-outlined">shield_person</span> Admin Control</a>
         <a id="logoutBtn" style="color: #ef4444;"><span class="material-symbols-outlined">logout</span> Logout</a>
@@ -178,12 +191,7 @@
                 <input type="password" id="regConfirmPassword" placeholder="Confirm Password">
             </div>
             <button id="authBtn">Continue</button>
-            
-            <p style="text-align: center; margin-top:20px; font-size: 0.9rem;">
-                <span id="toggleText">New here?</span> 
-                <span class="link-text" id="toggleAuth">Create Account</span>
-            </p>
-            
+            <p style="text-align: center; margin-top:20px; font-size: 0.9rem;"><span id="toggleText">New here?</span> <span class="link-text" id="toggleAuth">Create Account</span></p>
             <p id="msg" style="color:#ff4444; font-size: 0.8rem; text-align: center;"></p>
         </div>
 
@@ -287,17 +295,16 @@
         let isLoginMode = true;
         let editingPostId = null;
 
-        // HELPER: GET DYNAMIC COLORS FOR COURSES
         function getCourseColor(course, role) {
-            if (role === "admin") return "#a855f7"; // Admin is Purple
+            if (role === "admin") return "#a855f7"; 
             const c = course ? course.toUpperCase() : "";
             switch(c) {
-                case 'BSCS': return '#ef4444'; // Red
-                case 'BAPS': return '#4b5563'; // Gray/Black
-                case 'BSED': return '#38bdf8'; // Light Blue
-                case 'BEED': return '#1d4ed8'; // Dark Blue
-                case 'BSBA': return '#eab308'; // Yellow
-                default: return '#333';        // Neutral default
+                case 'BSCS': return '#ef4444'; 
+                case 'BAPS': return '#4b5563'; 
+                case 'BSED': return '#38bdf8'; 
+                case 'BEED': return '#1d4ed8'; 
+                case 'BSBA': return '#eab308'; 
+                default: return '#333';        
             }
         }
 
@@ -339,6 +346,11 @@
                 displayName = d.codename || `${d.firstname} ${d.lastname}`;
                 currentCourse = d.course || "N/A";
 
+                // Update Sidebar Display
+                document.getElementById('sideName').innerText = `${d.firstname} ${d.lastname}`;
+                document.getElementById('sideHandle').innerText = `@${d.codename || 'unnamed'}`;
+                document.getElementById('sideCourse').innerText = d.course || 'No Course Set';
+
                 if(currentUserRole === "admin") document.getElementById('adminOption').classList.remove('hidden');
                 
                 document.getElementById('editFirstname').value = d.firstname || "";
@@ -357,6 +369,8 @@
             }
         }
 
+        // Remaining functions: Listener, MarkRead, postComment, etc. remain exactly as they were in your source.
+        
         function startNotificationListener() {
             if (!userUID) return;
             const q = query(collection(db, "notifications"), where("targetUID", "==", userUID), orderBy("timestamp", "desc"), limit(20));
@@ -365,28 +379,17 @@
                 const dot = document.getElementById('notifDot');
                 let unreadCount = 0;
                 list.innerHTML = "";
-
-                if(snap.empty) {
-                    list.innerHTML = "<p style='text-align:center; color:#666; margin-top:20px;'>No recent activity</p>";
-                }
-
+                if(snap.empty) { list.innerHTML = "<p style='text-align:center; color:#666; margin-top:20px;'>No recent activity</p>"; }
                 snap.forEach(d => {
                     const n = d.data();
                     if(!n.read) unreadCount++;
-                    list.innerHTML += `
-                        <div class="notif-item ${n.read ? '' : 'notif-unread'}" onclick="markRead('${d.id}')">
-                            <b>${n.fromName}</b> ${n.message}
-                            <div class="comment-time">${formatTime(n.timestamp)}</div>
-                        </div>
-                    `;
+                    list.innerHTML += `<div class="notif-item ${n.read ? '' : 'notif-unread'}" onclick="markRead('${d.id}')"><b>${n.fromName}</b> ${n.message}<div class="comment-time">${formatTime(n.timestamp)}</div></div>`;
                 });
                 dot.style.display = unreadCount > 0 ? "block" : "none";
             });
         }
 
-        window.markRead = async (id) => {
-            await updateDoc(doc(db, "notifications", id), { read: true });
-        };
+        window.markRead = async (id) => { await updateDoc(doc(db, "notifications", id), { read: true }); };
 
         window.markAllRead = async () => {
             const q = query(collection(db, "notifications"), where("targetUID", "==", userUID), where("read", "==", false));
@@ -399,17 +402,7 @@
             const input = document.getElementById(`comment-input-${id}`);
             const text = input.value.trim();
             if(!text) return;
-
-            await addDoc(collection(db, "comments"), { 
-                postId: id, 
-                text: text, 
-                author: displayName, 
-                authorCourse: currentCourse,
-                authorUID: userUID,
-                authorRole: currentUserRole, // Saved for color coding
-                timestamp: serverTimestamp() 
-            });
-
+            await addDoc(collection(db, "comments"), { postId: id, text: text, author: displayName, authorCourse: currentCourse, authorUID: userUID, authorRole: currentUserRole, timestamp: serverTimestamp() });
             const mentions = text.match(/@(\w+)/g);
             if(mentions) {
                 mentions.forEach(async (m) => {
@@ -418,42 +411,22 @@
                     const userSnap = await getDocs(userQ);
                     userSnap.forEach(async (uDoc) => {
                         if(uDoc.id !== userUID) {
-                            await addDoc(collection(db, "notifications"), {
-                                targetUID: uDoc.id,
-                                fromName: displayName,
-                                message: "mentioned you in a comment.",
-                                read: false,
-                                timestamp: serverTimestamp()
-                            });
+                            await addDoc(collection(db, "notifications"), { targetUID: uDoc.id, fromName: displayName, message: "mentioned you in a comment.", read: false, timestamp: serverTimestamp() });
                         }
                     });
                 });
             }
-
             input.value = "";
         };
 
-        function processText(text) {
-            return text.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
-        }
+        function processText(text) { return text.replace(/@(\w+)/g, '<span class="mention">@$1</span>'); }
 
-        window.toggleComments = (id) => {
-            const section = document.getElementById(`comment-section-${id}`);
-            section.classList.toggle('hidden');
-        };
+        window.toggleComments = (id) => { document.getElementById(`comment-section-${id}`).classList.toggle('hidden'); };
 
-        window.deletePost = async (id) => { 
-            if(confirm("Permanently remove this post?")) await deleteDoc(doc(db, "announcements", id)); 
-        };
+        window.deletePost = async (id) => { if(confirm("Permanently remove this post?")) await deleteDoc(doc(db, "announcements", id)); };
 
-        window.openEditModal = (id, t, c) => { 
-            editingPostId = id; 
-            document.getElementById('editPostTitle').value = t; 
-            document.getElementById('editPostContent').value = c; 
-            document.getElementById('editModal').classList.remove('hidden'); 
-        };
+        window.openEditModal = (id, t, c) => { editingPostId = id; document.getElementById('editPostTitle').value = t; document.getElementById('editPostContent').value = c; document.getElementById('editModal').classList.remove('hidden'); };
 
-        // UPDATED LISTENER WITH COLOR LOGIC
         function startCommentListener(postId) {
             const q = query(collection(db, "comments"), where("postId", "==", postId), orderBy("timestamp", "asc"));
             onSnapshot(q, (snap) => {
@@ -463,18 +436,7 @@
                 snap.forEach(d => {
                     const c = d.data();
                     const tagColor = getCourseColor(c.authorCourse, c.authorRole);
-                    
-                    list.innerHTML += `
-                        <div class="comment-box">
-                            <div class="comment-header">
-                                <div>
-                                    <b class="link-text" onclick="viewUserProfile('${c.authorUID}')">${c.author}</b>
-                                    <span class="course-tag" style="background-color: ${tagColor}">${c.authorCourse || 'Guest'}</span>
-                                </div>
-                                <span class="comment-time">${formatTime(c.timestamp)}</span>
-                            </div>
-                            <div style="margin-top:2px;">${processText(c.text)}</div>
-                        </div>`;
+                    list.innerHTML += `<div class="comment-box"><div class="comment-header"><div><b class="link-text" onclick="viewUserProfile('${c.authorUID}')">${c.author}</b><span class="course-tag" style="background-color: ${tagColor}">${c.authorCourse || 'Guest'}</span></div><span class="comment-time">${formatTime(c.timestamp)}</span></div><div style="margin-top:2px;">${processText(c.text)}</div></div>`;
                 });
             });
         }
@@ -486,33 +448,8 @@
                 area.innerHTML = "";
                 snap.forEach(d => {
                     const p = d.data();
-                    const adminBtn = currentUserRole === 'admin' ? `
-                        <div class="admin-controls">
-                            <button class="btn-small" onclick="openEditModal('${d.id}', '${p.title}', '${p.content}')">Edit</button>
-                            <button class="btn-small" style="color:#ef4444" onclick="deletePost('${d.id}')">Del</button>
-                        </div>` : "";
-
-                    area.innerHTML += `
-                    <div class="post-card">${adminBtn}
-                        <div class="post-title-row">
-                             <span class="material-symbols-outlined" style="font-size:1.2rem; color:var(--accent-purple)">notifications</span>
-                             <h4 style="margin:0;">${p.title}</h4>
-                        </div>
-                        <span class="timestamp">${formatTime(p.timestamp)}</span>
-                        <p style="color:#ddd; margin-top:10px;">${p.content}</p>
-                        <div class="post-actions">
-                            <span class="action-btn" onclick="toggleComments('${d.id}')">
-                                <span class="material-symbols-outlined" style="font-size:1.1rem">chat_bubble</span> Comments
-                            </span>
-                        </div>
-                        <div id="comment-section-${d.id}" class="comment-section hidden">
-                            <div id="comments-list-${d.id}"></div>
-                            <div style="display:flex; gap:10px; margin-top:15px">
-                                <input type="text" id="comment-input-${d.id}" placeholder="Use @codename to mention..." style="margin:0">
-                                <button onclick="postComment('${d.id}')" style="width:auto; margin:0; padding:0 20px">Send</button>
-                            </div>
-                        </div>
-                    </div>`;
+                    const adminBtn = currentUserRole === 'admin' ? `<div class="admin-controls"><button class="btn-small" onclick="openEditModal('${d.id}', '${p.title}', '${p.content}')">Edit</button><button class="btn-small" style="color:#ef4444" onclick="deletePost('${d.id}')">Del</button></div>` : "";
+                    area.innerHTML += `<div class="post-card">${adminBtn}<div class="post-title-row"><span class="material-symbols-outlined" style="font-size:1.2rem; color:var(--accent-purple)">notifications</span><h4 style="margin:0;">${p.title}</h4></div><span class="timestamp">${formatTime(p.timestamp)}</span><p style="color:#ddd; margin-top:10px;">${p.content}</p><div class="post-actions"><span class="action-btn" onclick="toggleComments('${d.id}')"><span class="material-symbols-outlined" style="font-size:1.1rem">chat_bubble</span> Comments</span></div><div id="comment-section-${d.id}" class="comment-section hidden"><div id="comments-list-${d.id}"></div><div style="display:flex; gap:10px; margin-top:15px"><input type="text" id="comment-input-${d.id}" placeholder="Use @codename to mention..." style="margin:0"><button onclick="postComment('${d.id}')" style="width:auto; margin:0; padding:0 20px">Send</button></div></div></div>`;
                     startCommentListener(d.id);
                 });
             });
@@ -563,19 +500,8 @@
             const authBtn = document.getElementById('authBtn');
             const toggleText = document.getElementById('toggleText');
             const toggleLink = document.getElementById('toggleAuth');
-
-            if (isLoginMode) {
-                authTitle.innerText = "Login";
-                authBtn.innerText = "Continue";
-                toggleText.innerText = "New here?";
-                toggleLink.innerText = "Create Account";
-            } else {
-                authTitle.innerText = "Join Hub";
-                authBtn.innerText = "Register";
-                toggleText.innerText = "Already have an account?";
-                toggleLink.innerText = "Login";
-            }
-
+            if (isLoginMode) { authTitle.innerText = "Login"; authBtn.innerText = "Continue"; toggleText.innerText = "New here?"; toggleLink.innerText = "Create Account"; }
+            else { authTitle.innerText = "Join Hub"; authBtn.innerText = "Register"; toggleText.innerText = "Already have an account?"; toggleLink.innerText = "Login"; }
             document.getElementById('signupFields').classList.toggle('hidden', isLoginMode);
             document.getElementById('confirmPassField').classList.toggle('hidden', isLoginMode);
         };
@@ -586,31 +512,16 @@
             const msg = document.getElementById('msg');
             msg.innerText = "";
             try {
-                if (isLoginMode) {
-                    await signInWithEmailAndPassword(auth, email, pass);
-                } else {
+                if (isLoginMode) { await signInWithEmailAndPassword(auth, email, pass); }
+                else {
                     const confirmPass = document.getElementById('regConfirmPassword').value;
                     const fName = document.getElementById('regFirstname').value.trim();
                     const lName = document.getElementById('regLastname').value.trim();
                     const cName = document.getElementById('regCodename').value.trim();
-
-                    if(!fName || !lName || !cName) {
-                        msg.innerText = "Error: Name and Codename are required.";
-                        return;
-                    }
-
-                    if (pass !== confirmPass) {
-                        msg.innerText = "Error: Passwords do not match.";
-                        return;
-                    }
-
+                    if(!fName || !lName || !cName) { msg.innerText = "Error: Name and Codename are required."; return; }
+                    if (pass !== confirmPass) { msg.innerText = "Error: Passwords do not match."; return; }
                     const res = await createUserWithEmailAndPassword(auth, email, pass);
-                    await setDoc(doc(db, "users", res.user.uid), {
-                        firstname: fName,
-                        lastname: lName,
-                        codename: cName,
-                        role: "user"
-                    });
+                    await setDoc(doc(db, "users", res.user.uid), { firstname: fName, lastname: lName, codename: cName, role: "user" });
                 }
             } catch (e) { msg.innerText = "Auth Error: " + e.message; }
         };
@@ -618,40 +529,28 @@
         document.getElementById('publishBtn').onclick = async () => {
             const title = document.getElementById('adminPostTitle').value;
             const content = document.getElementById('adminPostContent').value;
-            
             if(!title || !content) return alert("Please fill all fields");
-
-            await addDoc(collection(db, "announcements"), { 
-                title: title, 
-                content: content, 
-                timestamp: serverTimestamp() 
-            });
-
+            await addDoc(collection(db, "announcements"), { title: title, content: content, timestamp: serverTimestamp() });
             const usersSnap = await getDocs(collection(db, "users"));
             usersSnap.forEach(async (uDoc) => {
                 if(uDoc.id !== userUID) {
-                    await addDoc(collection(db, "notifications"), {
-                        targetUID: uDoc.id,
-                        fromName: "Admin",
-                        message: `posted a new update: ${title}`,
-                        read: false,
-                        timestamp: serverTimestamp()
-                    });
+                    await addDoc(collection(db, "notifications"), { targetUID: uDoc.id, fromName: "Admin", message: `posted a new update: ${title}`, read: false, timestamp: serverTimestamp() });
                 }
             });
-
             document.getElementById('adminPostTitle').value = "";
             document.getElementById('adminPostContent').value = "";
             showView('welcomeView');
         };
 
         document.getElementById('saveEditBtn').onclick = async () => {
-            await updateDoc(doc(db, "announcements", editingPostId), { 
-                title: document.getElementById('editPostTitle').value, 
-                content: document.getElementById('editPostContent').value 
-            });
+            await updateDoc(doc(db, "announcements", editingPostId), { title: document.getElementById('editPostTitle').value, content: document.getElementById('editPostContent').value });
             document.getElementById('editModal').classList.add('hidden');
         };
+        window.showMyProfile = () => {
+    if (userUID) {
+        window.viewUserProfile(userUID); // Reuses your existing fetch logic
+    }
+};
     </script>
 </body>
 </html>
